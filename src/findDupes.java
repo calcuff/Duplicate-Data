@@ -8,6 +8,8 @@ import java.io.FileNotFoundException;
 import java.util.*;
 import java.io.File;
 import java.util.List;
+
+import com.sun.org.apache.xerces.internal.util.SynchronizedSymbolTable;
 import org.apache.commons.codec.language.Metaphone;
 
 public class findDupes {
@@ -18,8 +20,13 @@ public class findDupes {
 
         fillList(entriesList, myFile);
 
-        // Prints potential duplicates according to names
-        findDupeNames(entriesList);
+        //Prints list of data
+        display(entriesList);
+
+        //Testing with metaphone
+        Metaphone meta =  new Metaphone();
+        System.out.println(meta.isMetaphoneEqual(entriesList.get(4).get(1),entriesList.get(5).get(1)));
+
     }
 
     // Retrieves all comma separated strings of a single line as
@@ -46,33 +53,6 @@ public class findDupes {
     public static void display(List<List<String>> listOfRecords){
         for ( int i = 0; i < listOfRecords.size(); i++)
             System.out.println(listOfRecords.get(i));
-    }
-
-    // Boolean method to evaluate phonetic equality between 2 strings
-    public static boolean soundsSame(String str1, String str2){
-        Metaphone meta = new Metaphone();
-        return (meta.isMetaphoneEqual(str1, str2));
-    }
-
-    // Returns first name of a data entry
-    public static String getFname(List<List<String>> listOfRecords, int i){
-        return listOfRecords.get(i).get(1);
-    }
-
-    // Returns last name of a data entry
-    public static String getLname(List<List<String>> listOfRecords, int i){
-        return listOfRecords.get(i).get(2);
-    }
-
-    // Phonetically compares first and last names, prints potential dupes
-    public static void findDupeNames(List<List<String>> listOfRecords){
-        System.out.println("Potential duplicates: ");
-        for (int i = 0 ; i < listOfRecords.size(); i++)
-            for (int j = i +1; j < listOfRecords.size(); j++){
-                if (soundsSame(getFname(listOfRecords, i),getFname(listOfRecords, j))&&
-                        soundsSame(getLname(listOfRecords, i),getLname(listOfRecords, j)))
-                    System.out.println(listOfRecords.get(i) + "\n" + listOfRecords.get(j));
-            }
     }
 
 }

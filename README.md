@@ -1,0 +1,2 @@
+Duplicate-Data
+This project is designed to parse in a CSV file containing different data entries. This lightweight java application will identify possible duplicate entries in the data set. I implemented the Metaphone algorithm from Apache to phonetically compare Strings for equality.
