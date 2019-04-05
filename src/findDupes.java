@@ -17,22 +17,20 @@ public class findDupes {
     public static void main(String[] args) throws Exception {
         //Data structures
         List<List<String>> entriesList = new ArrayList<List<String>>();
-        List<List<String>> dupeNamesList = new ArrayList<List<String>>();
-        List<List<String>> dupeEmailsList = new ArrayList<List<String>>();
+        List<List<String>> dupesList = new ArrayList<List<String>>();
+        List<List<String>> nonDupesList = new ArrayList<List<String>>();
 
         //Parses .csv file into "entriesList"
         fill(entriesList, "Normal.csv");
 
-        // Finds potential duplicates according to first and last name
-        findDupeNames(entriesList, dupeNamesList);
+        // Finds potential duplicates according to first and last name and email
+        findDuplicates(entriesList, dupesList, nonDupesList);
 
-        //Prints list of potential dupes via names
-        //display(dupeNamesList);
+        //Prints list of potential duplicates
+        display(dupesList);
 
-        //Finds potential duplicates according to email
-        findDupeEmails(entriesList, dupeEmailsList);
-        display(dupeEmailsList);
-
+        //Prints list of non-duplicates
+        display(entriesList);
     }
 
     //Reads in .csv file and filld "records"
@@ -69,31 +67,26 @@ public class findDupes {
 
     //Returns email of a data entry
     public static String getEmail(List<List<String>> listOfRecords, int i){
-        return listOfRecords.get(i).get(5);
+        return listOfRecords.get(i).get(4);
     }
 
-    // Phonetically compares first and last names, adds to list of duplicates
-    public static void findDupeNames(List<List<String>> listOfRecords, List<List<String>> listofDupes){
-        for (int i = 0 ; i < listOfRecords.size(); i++)
-            for (int j = i +1; j < listOfRecords.size(); j++){
-                if (soundsSame(getFname(listOfRecords, i),getFname(listOfRecords, j))&&
-                        soundsSame(getLname(listOfRecords, i),getLname(listOfRecords, j))){
-                    listofDupes.add(listOfRecords.get(i));
-                    listofDupes.add(listOfRecords.get(j));
-                }
-            }
-    }
-
-    // Compares Levenshtein distance among emails, adds to duplicates if difference is 1 character or less
-    public static void findDupeEmails(List<List<String>> listOfRecords, List<List<String>> listofDupes) {
+    // Phonetically compares first and last names, and email similarity, adds to list of duplicates. Removes dupes from original list
+    public static void findDuplicates(List<List<String>> listOfRecords, List<List<String>> listofDupes, List<List<String>> listofNonDupes){
         LevenshteinDistance leva = new LevenshteinDistance();
+        listOfRecords.remove(0);
 
-        for (int i = 0; i < listOfRecords.size(); i++)
+        for (int i = 1 ; i < listOfRecords.size(); i++) {
             for (int j = i + 1; j < listOfRecords.size(); j++) {
-                if (leva.apply(getEmail(listOfRecords, i), getEmail(listOfRecords, j)) < 2) {
+                if (soundsSame(getFname(listOfRecords, i), getFname(listOfRecords, j)) &&
+                        soundsSame(getLname(listOfRecords, i), getLname(listOfRecords, j)) ||
+                        leva.apply(getEmail(listOfRecords, i), getEmail(listOfRecords, j)) < 2) {
+
                     listofDupes.add(listOfRecords.get(i));
                     listofDupes.add(listOfRecords.get(j));
-                }
+                    listOfRecords.remove(i);
+                    listOfRecords.remove(i);
+               }
             }
+        }
     }
 }
