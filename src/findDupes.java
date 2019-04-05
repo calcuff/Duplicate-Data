@@ -4,45 +4,39 @@
 // Duplicates will be printed out separately as well as a set of non-duplicate
 // entries.
 //
-import java.io.FileNotFoundException;
-import java.util.*;
-import java.io.File;
-import java.util.List;
 
-import com.sun.org.apache.xerces.internal.util.SynchronizedSymbolTable;
+import java.util.*;
+import java.util.List;
 import org.apache.commons.codec.language.Metaphone;
+import com.opencsv.CSVReader;
+import java.io.FileReader;
 
 public class findDupes {
 
-    public static void main(String[] args) throws FileNotFoundException {
+    public static void main(String[] args) throws Exception {
+        //Data structures
         List<List<String>> entriesList = new ArrayList<List<String>>();
-        File myFile = new File("Normal.csv");
+        List<List<String>> dupeNamesList = new ArrayList<List<String>>();
 
-        fillList(entriesList, myFile);
+        //Parses .csv file into "entriesList"
+        fill(entriesList, "Normal.csv");
 
-        // Prints potential duplicates according to names
-        findDupeNames(entriesList);
+        // Finds potential duplicates according to first and last name
+        findDupeNames(entriesList, dupeNamesList);
+
+        //Prints list of potential dupes
+        display(dupeNamesList);
 
     }
 
-    // Retrieves all comma separated strings of a single line as
-    public static List<String> getLineEntry(String record){
-        List<String> data = new ArrayList<String>();
-        Scanner rows = new Scanner(record);
-        rows.useDelimiter(",");
-        while(rows.hasNext()) {
-            data.add(rows.next());
+    //Reads in .csv file and filld "records"
+    public static List<List<String>> fill(List<List<String>> records, String myFile) throws Exception {
+        try (CSVReader csvReader = new CSVReader(new FileReader(myFile))) {
+            String[] values = null;
+            while ((values = csvReader.readNext()) != null)
+                records.add(Arrays.asList(values));
         }
-        return data;
-    }
-
-    // Fills list of lists taking input one line at a time via helper method, from data file
-    public static void fillList(List<List<String>> listOfRecords, File myFile) throws FileNotFoundException{
-        Scanner in = new Scanner(myFile);
-        while (in.hasNextLine()) {
-            listOfRecords.add(getLineEntry(in.nextLine()));
-        }
-        in.close();
+        return records;
     }
 
     // Method to print list of entries
@@ -50,6 +44,7 @@ public class findDupes {
         for ( int i = 0; i < listOfRecords.size(); i++)
             System.out.println(listOfRecords.get(i));
     }
+
     // Boolean method to evaluate phonetic equality between 2 strings
     public static boolean soundsSame(String str1, String str2){
         Metaphone meta = new Metaphone();
@@ -66,15 +61,15 @@ public class findDupes {
         return listOfRecords.get(i).get(2);
     }
 
-    // Phonetically compares first and last names, prints potential dupes
-    public static void findDupeNames(List<List<String>> listOfRecords){
-        System.out.println("Potential duplicates: ");
+    // Phonetically compares first and last names, adds to list of duplicates
+    public static void findDupeNames(List<List<String>> listOfRecords, List<List<String>> listofDupes){
         for (int i = 0 ; i < listOfRecords.size(); i++)
             for (int j = i +1; j < listOfRecords.size(); j++){
                 if (soundsSame(getFname(listOfRecords, i),getFname(listOfRecords, j))&&
-                        soundsSame(getLname(listOfRecords, i),getLname(listOfRecords, j)))
-                    System.out.println(listOfRecords.get(i) + "\n" + listOfRecords.get(j));
+                        soundsSame(getLname(listOfRecords, i),getLname(listOfRecords, j))){
+                    listofDupes.add(listOfRecords.get(i));
+                    listofDupes.add(listOfRecords.get(j));
+                }
             }
     }
-
 }
