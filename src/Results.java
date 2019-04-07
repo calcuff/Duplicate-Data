@@ -8,7 +8,7 @@
 import java.util.ArrayList;
 import java.util.List;
 
-public class Results {
+public class Results{
     public static void main(String[] args)  throws Exception{
         FindDupes finder = new FindDupes();
 
