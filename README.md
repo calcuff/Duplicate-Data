@@ -1,4 +1,8 @@
-Duplicate-Data
+## Editor's note
+Migrated to [https://github.com/calcuff/DupeData] to create a Maven managed project. No new updates will
+be posted here as of this commit. (4/7/19) See new link for working copy.
+
+## Duplicate-Data
 This project is designed to parse in a CSV file containing different data entries. This lightweight java
 application will identify possible duplicate entries in the data set. I implemented the Metaphone phonetic
 and Levenshtein character distance algorithms from the Apache library to compare entries for similarity.
